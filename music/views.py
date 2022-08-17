@@ -15,9 +15,6 @@ from django.core.paginator import Paginator
 # Datetime
 import datetime
 
-# Upload file
-from PIL import Image
-
 import re
 
 
