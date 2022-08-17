@@ -25,9 +25,15 @@
 
         {% if index %} 
             {% if tracks|length == 0 %} 
-                <h5 style="width: 100%; text-align: center;">
-                    There are no songs uploaded yet. Go <a href="{% url 'upload' %}">Here</a> to upload your songs.
-                </h5>
+                {% if user.is_authenticated %}
+                    <h5 style="width: 100%; text-align: center;">
+                        There are no songs uploaded yet. Go <a href="{% url 'upload' %}">Here</a> to upload your songs.
+                    </h5>
+                {% else %}
+                    <h5 style="width: 100%; text-align: center;">
+                        No songs uploaded yet
+                    </h5>
+                {% endif %}
             {% endif %}
         {% endif %}
 
