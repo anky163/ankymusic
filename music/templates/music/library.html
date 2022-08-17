@@ -1,0 +1,259 @@
+{% extends "music/layout.html" %}
+{% load static %}
+
+
+{% block body %} 
+
+    <div id="library-page">
+
+
+        <h3 id="library-header" style="color: purple; text-align: center;">{{ host }}'s LIBRARY</h3>
+
+
+        <!--If visiter is the library's owner-->
+        {% if user.id == host.id %}
+
+
+            <!--All Playlists-->
+            <div id="library-playlists">
+
+                <div class="smaller-headers">
+                    <h4>Playlists ({{ number_of_playlists }})</h4>
+
+                    {% if playlists_packages|length > 1 %}
+                        <a href="#first-header" data-group_type="playlists" onclick="showAllGroups(this)"><h5>See all</h5></a>
+                    {% endif %}
+                </div>
+
+                <div class="media-container" id="playlists-container">
+
+                    {% for package in playlists_packages %}
+                    
+                        <div class="media-group" id="playlists-group-{{ package.number }}">
+                            
+                            {% for playlist in package.object_list %}
+
+                                <div class="media-items">
+
+                                    <!--Create new playlist-->
+                                    {% if playlist.id == 0 %}
+                                        <div id="create-playlist">
+                                            <i class="fa fa-plus" aria-hidden="true" onclick="showCreatingTable()"></i>
+                                        </div>
+                                    {% else %}
+
+                                        <!--Previous button-->
+                                        {% if playlist == package.object_list.0 %}
+                                            {% if package.has_previous %}
+                                                <a class="media-previous" href="#playlists-group-{{ package.previous_page_number }}">
+                                                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                                </a>                   
+                                            {% endif %}
+                                        {% endif %}
+
+                                        
+                                        <!--Playlist's image-->
+                                        {% if playlist.tracks.all.0.photo %}
+                                            <img src="/music/media/{{ playlist.tracks.all.0.photo }}"> 
+                                        {% else %}
+                                            <img src="/static/music/media/music.jpg">
+                                        {% endif %}  
+
+                                        <h3 class="group-name">{{ playlist.name }}</h3>
+                                    
+                                        <!--Delete button-->
+                                        <button class="delete-button" data-user_id="{{ user.id }}" data-playlist_id="{{ playlist.id }}" onclick="confirmDeletingPlaylist(this)"><i class="fa fa-times"aria-hidden="true"></i></button>
+
+                                        <!--Play button-->
+                                        <button class="play-button">
+                                            <a href="{% url 'play_playlist' playlist.id %}">
+                                                <i class="fa fa-play" aria-hidden="true"></i>
+                                            </a>
+                                        </button> 
+
+
+                                        <!--Next button-->        
+                                        {% if playlist == package.object_list.4 %}  
+                                            {% if package.has_next %}                   
+                                                <a class="media-next" href="#playlists-group-{{ package.next_page_number }}">
+                                                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                                </a>
+                                            {% endif %} 
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                </div>
+
+                            {% endfor %}          
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!--Delete playlist confirm-->
+            <table id="library-deleting">
+
+                <tr>
+                    <td id="question">
+                        <p>Do you really want to delete this playlist from your library?</p>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td id="answer">
+                        <a href="#" onclick="cancelDeletingPlaylist()"><strong>Cancel</strong></a>
+                        <a id="agree-deleting-playlist" data-id="#" data-name="#" href="#"><strong>Agree</strong></a>
+                    </td>
+                </tr>
+
+            </table>
+
+
+            <!--Create new playlist-->
+            <table>          
+                <tr id="library-creating">
+                    <td>
+
+                        <div id="p">
+                            <p>New playlist</p>
+                        </div>
+
+                        <!--Copied from list.html-->
+                        <div id="input">
+                            <input autofocus id="new-playlist-name" type="text" name="playlist" placeholder="Playlist's name">
+                        </div>
+
+                        <div id="choices">
+                            <a href="#" onclick="cancelCreatingPlaylist()"><strong>Cancel</strong></a>
+                            <a href="#" onclick="createNewPrivatePlaylist()"><strong>Create</strong></a>
+                        </div>
+
+                    </td>
+
+                </tr>
+            </table>
+
+
+            <!--Divide Playlists and Uploaded-->
+            <div id="borderline">
+            </div>
+
+
+        {% endif %}
+
+
+
+
+
+
+        <!--UPLOADED-->
+        <div id="library-uploaded">
+
+            <div class="smaller-headers">
+                <h4>Uploaded ({{ number_of_uploaded }} tracks)</h4>
+
+                {% if uploaded_packages|length > 1 %}
+                    <a href="#second-header" data-group_type="uploaded" onclick="showAllGroups(this)"><h5>See all</h5></a>
+                {% endif %}
+            </div>
+
+            <div>
+                {% for package in uploaded_packages %}
+                    {% for group in package.object_list %}
+                        {% if group.0.title.0 in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                            <a style="margin-right: 10px;" href="#uploaded-{{ group.0.title.0 }}">
+                                <strong>{{ group.0.title.0 }}</strong>
+                            </a>
+                        {% else %}
+                            <a style="margin-right: 10px;" href="#uploaded-#">
+                                <strong>#</strong>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <br>
+
+            <div class="media-container" id="uploaded-container">
+
+                {% for package in uploaded_packages %}
+                
+                    <div class="media-group" id="uploaded-group-{{ package.number }}">
+                        
+                        {% for group in package.object_list %}
+
+                            <div class="media-items">
+
+                                <!--Previous button-->
+                                {% if group == package.object_list.0 %}
+                                    {% if package.has_previous %}      
+                                        <a class="media-previous-2" href="#uploaded-group-{{ package.previous_page_number }}">
+                                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                        </a>                                  
+                                    {% endif %}
+                                {% endif %}
+
+                                
+                                <!--Playlist's image-->
+                                {% if group.0.photo %}
+                                    {% if group.0.title.0 in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                                        <img id="uploaded-{{ group.0.title.0 }}" src="/music/media/{{ group.0.photo }}"> 
+                                    {% else %}
+                                        <img id="uploaded-#" src="/music/media/{{ group.0.photo }}">
+                                    {% endif %}
+                                {% else %}
+                                    {% if group.0.title.0 in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                                        <img id="uploaded-{{ group.0.title.0 }}" src="/static/music/media/music.jpg">
+                                    {% else %}
+                                        <img id="uploaded-#" src="/static/music/media/music.jpg">
+                                    {% endif %}
+                                {% endif %}  
+
+                                <!--Alphabet-->
+                                {% if group.0.title.0 in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                                    <h3 class="group-name">{{ group.0.title.0 }} ({{ group|length }})</h3>
+                                {% else %}
+                                    <h3 class="group-name"># ({{ group|length }})</h3>
+                                {% endif %}
+                                
+
+                                <!--Play button-->
+                                <button class="play-button">
+                                    <a href="{% url 'uploaded' host.id group.0.title.0.lower %}">
+                                        <i class="fa fa-play" aria-hidden="true"></i>
+                                    </a>
+                                </button> 
+
+
+                                <!--Next button-->        
+                                {% if group == package.object_list.4 %}  
+                                    {% if package.has_next %}                   
+                                        <a class="media-next-2" href="#uploaded-group-{{ package.next_page_number }}">
+                                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </a>
+                                    {% endif %} 
+                                {% endif %}
+                            
+                            </div>
+
+                        {% endfor %}          
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+    </div>  
+
+
+{% endblock %}

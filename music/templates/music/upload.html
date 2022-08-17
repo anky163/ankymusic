@@ -1,0 +1,50 @@
+{% extends "music/layout.html" %}
+{% load static %}
+
+
+{% block body %} 
+    {% if message %}
+      <div class="alert alert-danger" role="alert">
+          {{ message }}
+      </div>  
+    {% endif %}
+
+    <div>
+      <form autocomplete="on" action="{% url 'upload' %}" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+          <!--MP3 file-->
+          <div class="mb-3">
+              <label for="formFile" class="form-label">MP3 file</label>
+              <input class="form-control" type="file" name="audio" id="upload-audio" required>
+            </div>
+
+          <!--Photo-->
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Photo</label>
+            <input autocomplete="on" class="form-control" type="file" name="photo" id="upload-photo">
+          </div>
+
+          <!--Title-->
+          <div class="mb-3">
+          <input autocomplete="on" type="text" class="form-control" id="upload-title" name="title" placeholder="Title" required>
+          </div>
+
+          <!--Artists-->
+          <div class="mb-3">
+              <input autocomplete="on" type="text" class="form-control" id="upload-artists" name="artists" placeholder="Artists">
+          </div>
+
+          <!--Country-->
+          <div class="mb-3">
+            <input autocomplete="on" type="text" class="form-control" id="upload-country" name="country" placeholder="Country">
+         </div>
+
+          <!--Genre-->
+          <div class="mb-3">
+              <input autocomplete="on" type="text" class="form-control" id="upload-genre" name="genre" placeholder="Genre">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+{% endblock %}

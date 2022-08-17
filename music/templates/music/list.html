@@ -1,0 +1,520 @@
+{% extends "music/layout.html" %}
+{% load static %}
+
+
+{% block body %} 
+
+    <div id="list-page">
+
+
+        <!--This is for creating a playlist in javascript file-->
+        <div style="display: none;">
+            {% for track in tracks %}
+                <div class="all-tracks" id="data-{{ track.id }}" data-id="{{ track.id }}" data-title="{{ track.title }}" data-artists="{{ track.artists }}" data-image="{{ track.photo }}" data-audio="{{ track.audio }}"></div>
+            {% endfor %}
+        </div>
+
+
+        {% if result %}
+            <h3 id="result" style="color: purple;">{{ result }}</h3>
+        {% endif %}
+
+        {% if sorry %}
+            <h3 id="result" style="color: purple;">{{ sorry }}</h3>
+        {% endif %}
+
+        {% if index %} 
+            {% if tracks|length == 0 %} 
+                <h5 style="width: 100%; text-align: center;">
+                    There are no songs uploaded yet. Go <a href="{% url 'upload' %}">Here</a> to upload your songs.
+                </h5>
+            {% endif %}
+        {% endif %}
+
+
+        <!--Big Player-->
+        <table id="player">
+            <tr>
+
+                <!--Left part-->
+                <td id="player-left">
+
+                    <!--Logo-->
+                    <div id="player-icon">
+                        <i style="cursor: pointer;" class="fa fa-times" id="player-logo" aria-hidden="true" onclick="hidePlayer()"></i>
+                    </div>
+                    
+
+                    <!--Track's image-->
+                    <div id="player-track-image">
+                        {% if tracks.0.photo %}
+                            <img id="track-image" src="/music/media/{{ tracks.0.photo }}">
+                        {% else %} 
+                            <img id="track-image" src="/static/music/media/music.jpg">
+                        {% endif %}
+                    </div>
+
+
+                    <!--Volume-->
+                    <div id="player-volume">
+                        <i id="volume-icon" class="fa fa-volume-up" aria-hidden="true"></i>
+                        <input id="volume" type="range" min="0" max="100" step="1" value="10" onchange="changeVolume()">
+                    </div>
+
+                </td>
+
+                <!--Right part-->
+                <td id="player-right"> 
+        
+                    <!--Logo, Download button-->
+                    <div id="download">   
+
+                        <!--Logo-->
+                        <div id="player-icon-bonus">
+                            <i style="cursor: pointer;" class="fa fa-times" id="player-logo" aria-hidden="true" onclick="hidePlayer()"></i>
+                        </div>      
+
+                        <!--Download button-->
+                        <a id="download-button" class="horizontal" href="/music/media/{{ tracks.0.audio }}" download>
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                        </a>
+
+                    </div>
+
+                    <!--Top (Title, Artists)-->
+                    <div id="top">
+                        <div class="marquee" style="display: inline-flex;">
+                            <span id="track-title">{{ tracks.0.title }}</span>
+                            <span style="margin-left: 100%;" id="track-title-bonus">{{ tracks.0.title }}</span>
+                        </div>
+                        <p id="track-artists">{{ tracks.0.artists }}</p>
+                    </div>
+
+                    <!--Middle (Current time)-->
+                    <div id="middle">
+                        <input id="current-time" type="range" min="0" max="100" step="1" value="0" onchange="changeCurrentTime()">
+                    </div>
+
+                    <!--Bottom (Buttons)-->
+                    <div id="bottom">
+
+                        <!--Previous, Next, Play/Pause-->
+                        <div id="upper-button">           
+                
+                            <button class="step" id="previous-button" onclick="playPreviousTrack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+                            <button class="step" class="play-button" onclick="pauseTrack()"><i id="pause-icon" class="fa fa-play" aria-hidden="true"></i></button>                
+                            <button class="step" id="next-button" onclick="playNextTrack()"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
+                    
+                        </div>
+
+                        <!--Loop, Shuffle-->
+                        <div id="lower-button">
+                            <button style="margin-right: 10px;" class="repeat" id="repeat" onclick="repeatTrack()"><svg id="loop-icon"><use href="#loop"></use></svg></button>
+                            <button style="margin-left: 10px;" class="repeat" id="random" onclick="playWithShuffleMode()"><svg id="shuffle-icon"><use href="#shuffle"></use></svg></button>
+                        </div>  
+
+                        <!--Bonus a Volume tag-->
+                        <div id="player-volume-bonus">
+                            <i id="volume-icon-bonus" class="fa fa-volume-up" aria-hidden="true"></i>
+                            <input id="volume-bonus" type="range" min="0" max="100" step="1" value="10" onchange="changeBonusVolume()">
+                        </div>
+
+                    </div>
+
+                </td>
+
+            </tr>
+        </table>
+
+
+        <!--Paginator-->
+        {% if tracks|length != 0 %} 
+            <div id="paginator-navbar">    
+
+                    {% for page in pages %}
+
+                            <div class="paginator-navbar" id="paginator-{{ page.number }}">
+
+                                {% for list in lists %}
+
+                                    {% if page.number >= list|first and page.number <= list|last %}
+
+                                        <nav aria-label="Page navigation example" class="pages-list" id="list-{{ list.number }}">
+                                            <ul class="pagination">                
+
+                                                <!--Far previous-->
+                                                {% if list.has_previous %} 
+                                                    <li class="page-item">
+                                                        <a href="#" class="page-link" id="far-previous" data-direction="previous" data-edge="{{ list|first }}" onclick="showPaginator(this)">
+                                                            <i class="fa fa-fast-backward" aria-hidden="true"></i>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+
+
+                                                <!--Previous-->
+                                                {% if page.has_previous %}
+                                                    <li class="page-item">
+                                                        <a href="#" class="page-link" id="previous-button" data-page_number="{{ page.previous_page_number }}" onclick="showPage(this.dataset.page_number)">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+
+                                                <!--Page's number-->
+                                                {% for number in list %}
+                                                    <li class="page-item"><a href="#" class="page-link" id="page-link-{{ number }}" data-page_number="{{ number }}" onclick="showPage(this.dataset.page_number)">{{ number }}</a></li>                    
+                                                {% endfor %}
+
+                                                <!--Next-->
+                                                {% if page.has_next %}
+                                                    <li class="page-item">
+                                                        <a href="#" class="page-link" id="next-button" data-page_number="{{ page.next_page_number }}" onclick="showPage(this.dataset.page_number)">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+
+
+                                                <!--Far next-->
+                                                {% if list.has_next %} 
+                                                    <li class="page-item">
+                                                        <a href="#" class="page-link" id="far-next" data-direction="next" data-edge="{{ list|last }}" onclick="showPaginator(this)">
+                                                            <i class="fa fa-fast-forward" aria-hidden="true"></i>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+        
+
+                                            </ul>
+                                        </nav>
+
+                                    {% endif %}
+
+                                {% endfor %}
+                                
+                            </div>
+            
+                    {% endfor %}
+
+            </div>
+        {% else %}
+            {% if playlist %}
+                <h5 style="width: 100%; margin-top: 20px; text-align: center;">
+                    This playlist is empty, visit <a href="{% url 'list' %}">Here</a> to add some tracks.
+                </h5>
+            {% endif %}
+        {% endif %}
+
+        
+
+        <!--List of tracks-->
+        <div id="tracks-list" class="tracks-list">
+
+            <!--Paginator-->
+            {% for page in pages %}
+
+                <div class="paginator" id="page-{{ page.number }}">
+
+                    <!--Tracks list-->
+                    <table class="table">
+                        
+                        {% for track in page.object_list %}
+                        
+                            <tr class="track-bar" id="track-{{ track.id }}" data-id="{{ track.id }}" data-page_number="{{ page.number }}" style="cursor: pointer;">
+
+                                <!--Photo-->
+                                <td class="track-onclick" data-id="{{ track.id }}" class="track-infomation" id="track-photo">
+                                    <div class="photo-div">
+                                        {% if track.photo %}
+                                            <img src="/music/media/{{ track.photo }}">
+                                        {% else %}  
+                                            <img src="/static/music/media/music.jpg">
+                                        {% endif %}
+                                    </div>
+                                </td>
+
+
+                                <!--Title and Artists-->
+                                <td class="track-onclick" data-id="{{ track.id }}" class="track-infomation" id="track-title-artists">
+                            
+                                    <div id="title"><strong style="color: purple;">{{ track.title }}</strong></div> 
+                                    <div id="artists">
+                                        <a href="{% url 'artists' track.artists %}"><p style="white-space: nowrap; text-overflow: ellipsis;">{{ track.artists }}</p></a>
+                                    </div>
+                                    <div style="display: none;" class="playing-markers" id="playing-marker-of-track-{{ track.id }}"><strong style="color: #566573;">Playing . . .</strong></div>
+                                
+                                </td>  
+                                
+                                
+                                <!--Number of views-->
+                                <td class="track-onclick" data-id="{{ track.id }}" class="track-infomation" id="track-views">            
+                                    <div class="hide">
+                                        <img style="width: 30px; height: 30px; margin-right: 10px;" src="{% static 'music/media/headphone.jpg' %}">
+                                        <span id="views-of-track-{{ track.id }}">{{ track.views }}</span>
+                                    </div>
+                                </td>
+
+
+                                <!--Uploader-->
+                                <td class="track-onclick" class="hide" data-id="{{ track.id }}" class="track-infomation" style="width: 300px;" id="track-uploader">            
+                                    <div>
+                                        <img style="width: 30px; height: 30px; margin-right: 10px;" src="{% static 'music/media/person.png' %}">
+                                        <a href="{% url 'library' track.uploader.id %}">
+                                            <strong style="white-space: nowrap; text-overflow: ellipsis;">{{ track.uploader }}</strong>
+                                        </a>
+                                    </div>           
+                                </td>
+
+
+                                <!--Dot button-->
+                                <td class="track-infomation" id="track-download"> 
+                                    <a style="font-size: 20px; color: #566573;" href="#" data-uploader_id="{{ track.uploader.id }}" data-track_id="{{ track.id }}" data-audio="{{ track.audio }}" onclick="showAddingTable(this)">
+                                        <i id="dot-icon" class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+        
+                    </table>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+
+        <div id="placeholder">
+        </div>
+
+
+        <!--Adding table-->
+        <table id="adding">
+
+            <!--Download, Quit-->
+            <tr class="table-1" id="download-or-quit">
+
+                <!--Download, Quit buttons-->
+                <td id="download-option">
+                    <a id="adding-download-button" href="#" download>
+                        <span style="font-size: 30px;">
+                            <i class="fa fa-arrow-circle-down" aria-hidden="true"></i>
+                        </span>
+                        <span style="font-size: 20px;">Download</span>
+                    </a>
+
+                    <a href="#" onclick="hideAddingTable()" style="float: right; margin-right: 10px;">
+                        <span style="font-size: 20px;">
+                            <i class="fa fa-times" aria-hidden="true"></i>         
+                        </span>
+                    </a>
+                </td>
+
+            </tr>
+
+            {% if user.is_authenticated %}
+
+                <!--Remove-->
+                <tr class="table-1" id="remove-track" data-uploader_id="#" data-current_user_id="{{ user.id }}">
+                    <td>
+                        <a id="remove-track-anchor-link" href="#" data-track_id="#" onclick="showTable4(this)">
+                            <span  style="font-size: 30px;">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </span>
+                            <span style="font-size: 20px;">Remove</span>
+                        </a>
+                    </td>
+                </tr>
+
+
+                <!--Add to playlist button-->
+                <tr class="table-1" id="add-to-playlist-option">
+                    <td>
+                        <a href="#" onclick="showTable2()">
+                            <span  style="font-size: 30px;">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </span>
+                            <span style="font-size: 20px;">Add to playlist</span>
+                        </a>
+                    </td>
+                </tr>
+
+
+                <!--Creat , Add a track to, or Search for playlist-->
+                <tr class="table-2" id="table-2">
+            
+                    <td>
+                        <!--Search-->
+                        <div>
+                            <span>
+                                <input id="search-playlist" type="text" placeholder="Playlist" onkeyup="showSearchResutls()">
+                            </span>
+
+                            <!--Quit-->
+                            <span style="float: right; margin-right: 10px;">
+                                <a href="#" onclick="showTable1()">
+                                    <span style="font-size: 20px;">
+                                        <i class="fa fa-times" aria-hidden="true"></i>         
+                                    </span>
+                                </a>
+                            </span>
+                        </div>
+
+
+                        <!--Create-->
+                        <div>
+                            <a href="#" onclick="showTable3()">
+                                <span style="font-size: 30px;">
+                                    <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                                </span>
+                                <span style="font-size: 20px;">Create new playlist</span>
+                            </a>
+                        </div>
+
+
+                        <!--Add a track into a playlist-->
+                        <div id="all-playlists">
+                            {% for playlist in playlists %}
+
+                                <!--These are all existing playlists, by default, displayed-->
+                                <div class="default-results" style="margin-bottom: 5px;">
+                                    <a style="font-size: 18px; color: white;" class="playlist_name" href="#" data-playlist_name="{{ playlist.name }}" onclick="addTrackToPlaylist(this)">
+                                        {% if playlist.tracks.all.0.photo %}
+                                            <img style="width: 35px; height: 35px;" src="/music/media/{{ playlist.tracks.all.0.photo }}"> <span style="margin-left: 2px;">{{ playlist.name }}</span>
+                                        {% else %}
+                                            <img style="width: 35px; height: 35px;" src="/static/music/media/music.jpg"> <span style="margin-left: 2px;">{{ playlist.name }}</span>
+                                        {% endif %}           
+                                    </a>                             
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                    </td>
+
+                </tr>
+
+
+                <!--New Playlist actually created here-->
+                <tr class="table-3" id="table-3">
+                    <td>
+
+                        <p style="font-size: 20px;">Create playlist</p>
+                    
+                        <div>    
+                            <input autofocus id="new-playlist-name" type="text" name="playlist" value="#Playlist {{ new_playlist_index }}">
+                            <input hidden id="added-track-id" type="number" name="track_id" value="0">
+                        </div>
+                        <div style="float: right; margin-right: 5px; margin-top: 20px; margin-bottom: 10px;">
+                            <a style="color: #F2F3F5; font-size: 18px;" href="#" onclick="hideTable3()"><strong>Cancel</strong></a>
+                            <a style="color: #F2F3F5; font-size: 18px; margin-left: 10px;" href="#" onclick="createNewPrivatePlaylist()"><strong>Agree</strong></a>
+                        </div>
+
+                    </td>
+                </tr>
+
+
+                <!--Track actually deleted here-->
+                <tr class="table-4" id="table-4">
+                    <td>
+                        <div id="question">
+                            <strong>Do you really want to remove this track from website?</strong>
+                        </div>
+                        <div id="answer">
+                            <a href="#" onclick="cancelRemovingTrack()"><strong>Cancel</strong></a>
+                            <a id="agree-removing-track" data-track_id="#" href="#" onclick="removeThisTrack(this)"><strong>Remove</strong></a>
+                        </div>
+                    </td>
+                </tr>
+
+            {% endif %}
+
+        </table>
+
+
+
+        <!--Mini Player-->
+        <div class="mini-player" id="mini-player" style="display: inline-flex;">
+
+            <!--Image-->
+            <div id="mini-player-image">
+                {% if tracks.0.photo %}
+                    <img id="track-image-2" src="/music/media/{{ tracks.0.photo }}">
+                {% else %} 
+                    <img id="track-image-2" src="/static/music/media/music.jpg">
+                {% endif %}
+            </div>
+
+            <!--Title and Artists-->
+            <div id="mini-player-left">
+                <div id="title">
+                    <marquee id="track-title-2">{{ tracks.0.title }}</marquee>
+                    <div id="track-artists-2">{{ tracks.0.artists }}</div>
+                </div>
+
+                <!--See more-->
+                <div id="seemore-div">
+                    <button class="seemore" id="seemore-button" onclick="showPlayer()"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button> 
+                </div>
+            </div>
+
+            <!--Buttons, Duration-->
+            <div id="mini-player-center">
+                <div id="mini-player-buttons">
+                    <!--Loop-->
+                    <button class="side-buttons" id="repeat-2" onclick="repeatTrack()"><i id="loop-icon-2" class="fa fa-repeat" aria-hidden="true"></i></button>
+
+                    <!--Previous, Pause, Next-->
+                    <button class="center-buttons" id="previous-button-2" onclick="playPreviousTrack()"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+                    <button class="center-buttons" class="play-button" onclick="pauseTrack()"><i id="pause-icon-2" class="fa fa-play" aria-hidden="true"></i></button>                  
+                    <button class="center-buttons" id="next-button-2" onclick="playNextTrack()"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
+
+                    <!--Shuffle-->
+                    <button class="side-buttons" id="random-2" onclick="playWithShuffleMode()"><i id="shuffle-icon-2" class="fa fa-random" aria-hidden="true"></i></button>  
+                </div>
+                <div class="current-time-2">
+                    <input id="current-time-2" type="range" min="0" max="100" step="1" value="0" onchange="changeCurrentTime()">
+                </div>
+            </div>
+
+            <!--Volume-->
+            <div id="mini-player-right">
+                <i style="color: white;" id="volume-icon-2" class="fa fa-volume-up" aria-hidden="true"></i>
+                <input id="volume-2" type="range" min="0" max="100" step="1" value="10" onchange="changeVolume()">
+            </div>
+
+        </div>
+
+
+
+        <!--Audio tag-->
+        <audio style="display: none;" id="audio" controls onplay="changePlayIcon()" ontimeupdate="updateCurrentTime()" onended="playNextTrack()">
+            <!--By default, play the 1st track-->
+            <source id="track-audio" data-id="{{ tracks.0.id }}" src="/music/media/{{ tracks.0.audio }}" type="audio/mp3">
+        </audio>
+
+
+
+        <!--Loop, Shuffle icon-->
+        <div style="display: none;">
+            <!--Loop-->
+            <svg id="loop" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                </svg>
+        
+            <!--Shuffle-->
+            <svg id="shuffle" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-shuffle" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5z"/>
+            <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z"/>
+            </svg>
+        </div>
+
+
+
+    </div>
+
+{% endblock %}

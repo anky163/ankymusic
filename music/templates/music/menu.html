@@ -1,0 +1,85 @@
+{% extends "music/layout.html" %}
+{% load static %}
+
+
+{% block body %} 
+
+    <!--Copied from Library-->
+    <div id="library-page">
+
+        <div id="library-uploaded">
+
+            <div class="smaller-headers">
+                <h4>{{ menu }}</h4>
+
+                {% if packages|length > 1 %}
+                    <a href="#second-header" data-group_type="uploaded" onclick="showAllGroups(this)"><h5>See all</h5></a>
+                {% endif %}
+            </div>
+
+
+            <div class="media-container" id="uploaded-container">
+
+                {% for package in packages %}
+                
+                    <div class="media-group" id="group-{{ package.number }}">
+                        
+                        {% for group in package.object_list %}
+
+                            <div class="media-items">
+
+                                <!--Previous button-->
+                                {% if group == package.object_list.0 %}
+                                    {% if package.has_previous %}      
+                                        <a class="media-previous-2" href="#group-{{ package.previous_page_number }}">
+                                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                        </a>                                  
+                                    {% endif %}
+                                {% endif %}
+
+                                
+                                <!--Playlist's image-->
+                                <img src="/static/music/media/{{ group.name }}.jpg"> 
+
+                                <!--Group's name-->
+                                <h3 class="group-name">{{ group.name }} ({{ group.number_of_tracks }})</h3>
+                                
+
+                                <!--Play button-->
+                                <button class="play-button">
+                                    {% if menu == 'Genres' %}
+                                        <a href="{% url 'genre' group.name %}">
+                                            <i class="fa fa-play" aria-hidden="true"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'country' group.name %}">
+                                            <i class="fa fa-play" aria-hidden="true"></i>
+                                        </a>
+                                    {% endif %}
+                                </button> 
+
+
+                                <!--Next button-->        
+                                {% if group == package.object_list.4 %}  
+                                    {% if package.has_next %}                   
+                                        <a class="media-next-2" href="#group-{{ package.next_page_number }}">
+                                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </a>
+                                    {% endif %} 
+                                {% endif %}
+                            
+                            </div>
+
+                        {% endfor %}          
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
