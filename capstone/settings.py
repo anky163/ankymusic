@@ -143,31 +143,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'music/media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-def howManyGames(p, d, m, s):
-    # Return the number of games you can buy
-    # p - nd >= m
-    # p - (n + 1) * d < m
-    
-    # number of times the price reduces d dollars:
-    t = (p - m) // d
-    # number of prices bigger than m:
-    b = t + 1
-    # Summary of all prices bigger than m:
-    
-    
-    counter = 0
-    cost = 0
-    while p >= m:
-        counter += 1
-        cost += p
-        p -= d
-        
-    # now p < m:
-    while cost + m <= s:
-        counter += 1
-        cost += m
-        
-    return counter
-
-
-print(howManyGames(100, 1, 1, 99))
