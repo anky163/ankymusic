@@ -13,7 +13,7 @@ from .models import User, Song, Playlist
 from django.core.paginator import Paginator
 
 # Datetime
-import datetime
+from django.utils import timezone
 
 import re
 
@@ -173,7 +173,9 @@ def upload(request):
     genre = request.POST["genre"].strip()
     country = request.POST["country"].strip()
 
-    date = datetime.datetime.now()
+    date = timezone.now().date()
+
+    # date = datetime.datetime.now()
 
     valid_audio_file = re.search(r'^.+\.mp3$', f"{audio}")
     if not valid_audio_file:
