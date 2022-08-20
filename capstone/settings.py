@@ -100,6 +100,7 @@ WSGI_APPLICATION = 'capstone.wsgi.application'
 
 MAX_CONN_AGE = 600
 
+# Local SQLite3
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -107,10 +108,12 @@ MAX_CONN_AGE = 600
 #     }
 # }
 
+
+# Client's PostgreSQL
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'test',
+#         'NAME': 'ankymusic_db',
 #         'USER': 'postgres',
 #         'PASSWORD': 'lenhhoxung163',
 #         'HOST': 'localhost',
@@ -118,6 +121,8 @@ MAX_CONN_AGE = 600
 #     }
 # }
 
+
+# HEROKU's PostgreSQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
