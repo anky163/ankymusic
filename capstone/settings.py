@@ -107,26 +107,39 @@ MAX_CONN_AGE = 600
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'test',
+#         'USER': 'postgres',
+#         'PASSWORD': 'lenhhoxung163',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test',
-        'USER': 'postgres',
-        'PASSWORD': 'lenhhoxung163',
-        'HOST': 'localhost',
+        'NAME': 'd9jum2gijvbjho',
+        'USER': 'dfaoytvwzcgpoo',
+        'PASSWORD': '6d4f9e3be41be26e5d9fc1027a764651b6f8c89a9927bb4b868e129e09135d74',
+        'HOST': 'ec2-44-195-100-240.compute-1.amazonaws.com',
         'PORT': '5432',
+        'URI': 'postgres://dfaoytvwzcgpoo:6d4f9e3be41be26e5d9fc1027a764651b6f8c89a9927bb4b868e129e09135d74@ec2-44-195-100-240.compute-1.amazonaws.com:5432/d9jum2gijvbjho',
+        'Heroku CLI': 'heroku pg:psql postgresql-animated-20085 --app ankymusic',
     }
 }
 
 
-if "DATABASE_URL" in os.environ:
-    # Configure Django for DATABASE_URL environment variable.
-    DATABASES["default"] = dj_database_url.config(
-        conn_max_age=MAX_CONN_AGE, ssl_require=True)
+# if "DATABASE_URL" in os.environ:
+#     # Configure Django for DATABASE_URL environment variable.
+#     DATABASES["default"] = dj_database_url.config(
+#         conn_max_age=MAX_CONN_AGE, ssl_require=True)
 
-    # Enable test database if found in CI environment.
-    if "CI" in os.environ:
-        DATABASES["default"]["TEST"] = DATABASES["default"]
+#     # Enable test database if found in CI environment.
+#     if "CI" in os.environ:
+#         DATABASES["default"]["TEST"] = DATABASES["default"]
 
 
 
