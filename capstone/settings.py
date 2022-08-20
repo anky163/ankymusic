@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from django.test.runner import DiscoverRunner
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -99,23 +100,23 @@ WSGI_APPLICATION = 'capstone.wsgi.application'
 
 MAX_CONN_AGE = 600
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'ankymusic_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'lenhhoxung163',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'test',
+        'USER': 'postgres',
+        'PASSWORD': 'lenhhoxung163',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 
 if "DATABASE_URL" in os.environ:
@@ -180,6 +181,23 @@ TEMPLATE_DIRS = (
 # Upload media file
 MEDIA_URL = '/music/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'music/media')
+
+
+
+
+# Test Runner Config
+class HerokuDiscoverRunner(DiscoverRunner):
+    """Test Runner for Heroku CI, which provides a database for you.
+    This requires you to set the TEST database (done for you by settings().)"""
+
+    def setup_databases(self, **kwargs):
+        self.keepdb = True
+        return super(HerokuDiscoverRunner, self).setup_databases(**kwargs)
+
+
+# Use HerokuDiscoverRunner on Heroku CI
+if "CI" in os.environ:
+    TEST_RUNNER = "gettingstarted.settings.HerokuDiscoverRunner"
 
 
 

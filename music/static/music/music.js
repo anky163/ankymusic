@@ -137,8 +137,7 @@ function pauseTrack() {
         pause_icon.className = 'fa fa-play';
         pause_icon_2.className = 'fa fa-play';
 
-    }
-    else {
+    } else {
         audio.play();
         is_playing = true;
 
@@ -153,14 +152,12 @@ function pauseTrack() {
 function changeCurrentTime() {
 
     // Changing current time at Big Player
-    if (big_player_mode === true) 
-    {
+    if (big_player_mode === true) {
         current_time_2.value = current_time.value;
     }
 
     // Changing current time at Mini Player
-    else if (big_player_mode === false) 
-    {  
+    else if (big_player_mode === false) {  
         current_time.value = current_time_2.value;
     }
     audio.pause();
@@ -173,16 +170,14 @@ function changeCurrentTime() {
 function changeVolume() { 
 
     // If user's changing volume at Big Player
-    if (big_player_mode === true) 
-    {
+    if (big_player_mode === true) {
         audio.volume = volume.value / 100;  
         volume_bonus.value = volume.value;      
         volume_2.value = volume.value;
     }
 
     // User's changing volume at Mini Player 
-    else if (big_player_mode === false)
-    {
+    else if (big_player_mode === false) {
         audio.volume = volume_2.value / 100;
         volume.value = volume_2.value;
         volume_bonus.value = volume_2.value;
@@ -213,8 +208,7 @@ function changeBonusVolume() {
         volume_icon.className = 'fa fa-volume-off';  
         volume_icon_bonus.className = 'fa fa-volume-off'; 
         volume_icon_2.className = 'fa fa-volume-off';
-    }
-    else {
+    } else {
         volume_icon.className = 'fa fa-volume-up';
         volume_icon_bonus.className = 'fa fa-volume-up';
         volume_icon_2.className = 'fa fa-volume-up';
@@ -252,9 +246,7 @@ function repeatTrack() {
 
         audio.loop = true;
 
-    }
-
-    else {
+    } else {
 
         is_repeated = false;
 
@@ -336,8 +328,7 @@ function showPaginator(element) {
     let direction = element.dataset.direction;
     if (direction === 'previous') {
         page_number = edge_number - 5;
-    }
-    else if (direction === 'next') {
+    } else if (direction === 'next') {
         page_number = edge_number + 1;
     }
 
@@ -464,8 +455,7 @@ function loadTrack(index) {
             if (track.image === '') {
                 track_image.src = '/static/music/media/music.jpg';
                 track_image_2.src = '/static/music/media/music.jpg';
-            }
-            else {
+            } else {
                 track_image.src = `/music/media/${track.image}`;
                 track_image_2.src = `/music/media/${track.image}`;
             }
@@ -495,9 +485,7 @@ function loadTrack(index) {
 
             //console.log(`Playing "${track.title}"`);
 
-        }
-
-        else {
+        } else {
             console.log('This track is playing');
             return false;
         }
@@ -558,8 +546,7 @@ function playWithShuffleMode() {
         // Order playlist
         current_playlist = cloneArray(ordered_playlist);
         //console.log(current_playlist);
-    } 
-    else {
+    } else {
         is_shuffled = true;
 
         shuffle_button.style.background = '#FF8A65';
@@ -663,13 +650,11 @@ function showAddingTable(element) {
 function removeThisTrack(element) {
     let track_id = element.dataset.track_id;
     fetch(`/remove/${track_id}`, {
-        method: "PUT"
-    })
+            method: "PUT"
+        })
     .then(reponse => reponse.json())
     .then(result => {
-
         alert(result.message);
-
         location.reload();
     })
 }
@@ -769,12 +754,12 @@ function createNewPrivatePlaylist() {
         let track_id = added_track_id.value;
 
         fetch(`/newplaylist`, {
-            method: 'POST',
-            body: JSON.stringify({
-                playlist_name: playlist_name,
-                track_id: track_id
+                method: 'POST',
+                body: JSON.stringify({
+                    playlist_name: playlist_name,
+                    track_id: track_id
+                })
             })
-        })
         .then(response => response.json())
         .then(result => {
 
