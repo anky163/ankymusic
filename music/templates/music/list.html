@@ -54,7 +54,7 @@
                     <!--Track's image-->
                     <div id="player-track-image">
                         {% if tracks.0.photo %}
-                            <img id="track-image" src="/music/media/{{ tracks.0.photo }}">
+                            <img id="track-image" src="/static/music/{{ tracks.0.photo }}">
                         {% else %} 
                             <img id="track-image" src="/static/music/media/music.jpg">
                         {% endif %}
@@ -81,7 +81,7 @@
                         </div>      
 
                         <!--Download button-->
-                        <a id="download-button" class="horizontal" href="/music/media/{{ tracks.0.audio }}" download>
+                        <a id="download-button" class="horizontal" href="/static/music/{{ tracks.0.audio }}" download>
                             <i class="fa fa-download" aria-hidden="true"></i>
                         </a>
 
@@ -233,7 +233,7 @@
                                 <td class="track-onclick" data-id="{{ track.id }}" class="track-infomation" id="track-photo">
                                     <div class="photo-div">
                                         {% if track.photo %}
-                                            <img src="/music/media/{{ track.photo }}">
+                                            <img src="/static/music/{{ track.photo }}">
                                         {% else %}  
                                             <img src="/static/music/media/music.jpg">
                                         {% endif %}
@@ -390,7 +390,7 @@
                                 <div class="default-results" style="margin-bottom: 5px;">
                                     <a style="font-size: 18px; color: white;" class="playlist_name" href="#" data-playlist_name="{{ playlist.name }}" onclick="addTrackToPlaylist(this)">
                                         {% if playlist.tracks.all.0.photo %}
-                                            <img style="width: 35px; height: 35px;" src="/music/media/{{ playlist.tracks.all.0.photo }}"> <span style="margin-left: 2px;">{{ playlist.name }}</span>
+                                            <img style="width: 35px; height: 35px;" src="/static/music/{{ playlist.tracks.all.0.photo }}"> <span style="margin-left: 2px;">{{ playlist.name }}</span>
                                         {% else %}
                                             <img style="width: 35px; height: 35px;" src="/static/music/media/music.jpg"> <span style="margin-left: 2px;">{{ playlist.name }}</span>
                                         {% endif %}           
@@ -448,7 +448,7 @@
             <!--Image-->
             <div id="mini-player-image">
                 {% if tracks.0.photo %}
-                    <img id="track-image-2" src="/music/media/{{ tracks.0.photo }}">
+                    <img id="track-image-2" src="/static/music/{{ tracks.0.photo }}">
                 {% else %} 
                     <img id="track-image-2" src="/static/music/media/music.jpg">
                 {% endif %}
@@ -499,7 +499,7 @@
         <!--Audio tag-->
         <audio style="display: none;" id="audio" controls onplay="changePlayIcon()" ontimeupdate="updateCurrentTime()" onended="playNextTrack()">
             <!--By default, play the 1st track-->
-            <source id="track-audio" data-id="{{ tracks.0.id }}" src="/music/media/{{ tracks.0.audio }}" type="audio/mp3">
+            <source id="track-audio" data-id="{{ tracks.0.id }}" src="/static/music/{{ tracks.0.audio }}" type="audio/mp3">
         </audio>
 
 

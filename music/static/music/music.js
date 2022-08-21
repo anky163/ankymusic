@@ -448,7 +448,7 @@ function loadTrack(index) {
 
             
             // Load download button
-            download_button.href = `/music/media/${track.audio}`;
+            download_button.href = `/static/music/${track.audio}`;
 
 
             // Load track's image at both Big Player and Mini Player
@@ -456,8 +456,8 @@ function loadTrack(index) {
                 track_image.src = '/static/music/media/music.jpg';
                 track_image_2.src = '/static/music/media/music.jpg';
             } else {
-                track_image.src = `/music/media/${track.image}`;
-                track_image_2.src = `/music/media/${track.image}`;
+                track_image.src = `/static/music/${track.image}`;
+                track_image_2.src = `/static/music/${track.image}`;
             }
 
             // Load track's title at both Big Player and Mini Player
@@ -478,7 +478,7 @@ function loadTrack(index) {
             updateViews();
 
             // Load track's source
-            track_audio.src = `/music/media/${track.audio}`;
+            track_audio.src = `/static/music/${track.audio}`;
     
             audio.load();
             audio.play();
@@ -632,7 +632,7 @@ function showPlayer() {
 function showAddingTable(element) {
     adding.style.display = 'table';
 
-    adding_download_button.href = `/music/media/${element.dataset.audio}`;
+    adding_download_button.href = `/static/music/${element.dataset.audio}`;
 
     added_track_id.value = element.dataset.track_id; 
 

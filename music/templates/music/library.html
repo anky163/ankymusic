@@ -54,7 +54,7 @@
                                         
                                         <!--Playlist's image-->
                                         {% if playlist.tracks.all.0.photo %}
-                                            <img src="/music/media/{{ playlist.tracks.all.0.photo }}"> 
+                                            <img src="/static/music/{{ playlist.tracks.all.0.photo }}"> 
                                         {% else %}
                                             <img src="/static/music/media/music.jpg">
                                         {% endif %}  
@@ -203,9 +203,9 @@
                                 <!--Playlist's image-->
                                 {% if group.0.photo %}
                                     {% if group.0.title.0 in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-                                        <img id="uploaded-{{ group.0.title.0 }}" src="/music/media/{{ group.0.photo }}"> 
+                                        <img id="uploaded-{{ group.0.title.0 }}" src="/static/music/{{ group.0.photo }}"> 
                                     {% else %}
-                                        <img id="uploaded-#" src="/music/media/{{ group.0.photo }}">
+                                        <img id="uploaded-#" src="/static/music/{{ group.0.photo }}">
                                     {% endif %}
                                 {% else %}
                                     {% if group.0.title.0 in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
